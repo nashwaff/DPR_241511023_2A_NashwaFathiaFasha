@@ -12,6 +12,13 @@
       transform: translateY(-5px);
       transition: 0.3s;
     }
+    .btn-dark {
+      background-color: #212529;
+      border: none;
+    }
+    .btn-dark:hover {
+      background-color: #343a40;
+    }
   </style>
 </head>
 <body>
@@ -31,8 +38,8 @@
     <p class="text-muted">Selamat datang di panel admin. Silakan pilih menu di bawah ini:</p>
   </div>
 
+  <!-- Baris Pertama: Anggota -->
   <div class="row justify-content-center">
-    <!-- Tambah Data Anggota -->
     <div class="col-md-4 mb-4">
       <div class="card shadow-sm">
         <div class="card-body text-center">
@@ -43,7 +50,6 @@
       </div>
     </div>
 
-    <!-- Lihat Data Anggota -->
     <div class="col-md-4 mb-4">
       <div class="card shadow-sm">
         <div class="card-body text-center">
@@ -54,6 +60,30 @@
       </div>
     </div>
   </div>
+
+  <!-- Baris Kedua: Komponen Gaji -->
+  <div class="row justify-content-center mt-3">
+    <div class="col-md-4 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-body text-center">
+          <h5 class="card-title">Tambah Komponen Gaji</h5>
+          <p class="card-text">Tambahkan komponen gaji atau tunjangan baru ke sistem.</p>
+          <a href="<?= base_url('admin/komponen/tambah') ?>" class="btn btn-dark w-100">Tambah</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-body text-center">
+          <h5 class="card-title">Lihat Komponen Gaji</h5>
+          <p class="card-text">Lihat semua komponen gaji dan tunjangan yang sudah terdaftar.</p>
+          <a href="<?= base_url('admin/komponen/lihat') ?>" class="btn btn-dark w-100">Lihat</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 </body>

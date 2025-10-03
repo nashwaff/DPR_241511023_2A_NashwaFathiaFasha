@@ -27,5 +27,7 @@ $routes->group('admin', ['filter' => ['auth', 'role:Admin']], static function($r
     //CRUD Komponen Gaji
     $routes->get('komponen/tambah', 'KomponenGaji::tambahForm');
     $routes->post('komponen/simpan', 'KomponenGaji::simpan');
+    $routes->get('komponen/lihat', 'KomponenGaji::lihat');
+
 });
 

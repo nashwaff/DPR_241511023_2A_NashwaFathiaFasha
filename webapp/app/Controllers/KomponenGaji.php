@@ -33,4 +33,25 @@ class KomponenGaji extends Controller
 
         return redirect()->to('/admin/dashboard')->with('success', 'Komponen Gaji berhasil ditambahkan!');
     }
+
+    public function lihat()
+    {
+        $model = new KomponenGajiModel();
+        $keyword = $this->request->getGet('keyword');
+
+        if ($keyword) {
+            $data['komponen'] = $model
+                ->like('id_komponen_gaji', $keyword)
+                ->orLike('nama_komponen', $keyword)
+                ->orLike('kategori', $keyword)
+                ->orLike('jabatan', $keyword)
+                ->orLike('nominal', $keyword)
+                ->orLike('satuan', $keyword)
+                ->findAll();
+        } else {
+            $data['komponen'] = $model->findAll();
+        }
+
+        return view('komponen/LihatKomponenGaji', $data);
+    }
 }
