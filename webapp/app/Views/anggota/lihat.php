@@ -15,7 +15,7 @@
 </nav>
 
 <div class="container mt-5">
-  <h2 class="mb-4 text-center">📋 Daftar Anggota DPR</h2>
+  <h2 class="mb-4 text-center"> Daftar Anggota DPR</h2>
 
   <!-- Alert pesan sukses atau error -->
   <?php if (session()->getFlashdata('success')): ?>
@@ -59,11 +59,20 @@
             <td><?= esc($a['jabatan']) ?></td>
             <td><?= esc($a['status_pernikahan']) ?></td>
             <td><?= esc($a['jumlah_anak']) ?></td>
-            <td>
+            <td class="d-flex gap-2">
               <!-- Tombol Ubah -->
-              <a href="<?= base_url('admin/anggota/ubah/' . $a['id_anggota']) ?>" class="btn btn-warning btn-sm">✏️ Ubah</a>
-              
-              <!-- Tombol Hapus (nanti kita aktifkan di step berikutnya) -->
+            <a href="<?= base_url('admin/anggota/ubah/' . $a['id_anggota']) ?>" 
+                class="btn btn-warning btn-sm d-inline-flex align-items-center">
+                Ubah
+            </a>
+
+            <!-- Tombol Hapus -->
+            <a href="<?= base_url('admin/anggota/hapus/' . $a['id_anggota']) ?>" 
+                class="btn btn-danger btn-sm d-inline-flex align-items-center"
+                onclick="return confirm('Yakin ingin menghapus data <?= esc($a['nama_depan']) ?>? Data ini akan hilang permanen.')">
+                Hapus
+            </a>
+            </td>
               <!-- <a href="<?= base_url('admin/anggota/hapus/' . $a['id_anggota']) ?>" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus data ini?')">🗑️ Hapus</a> -->
             </td>
           </tr>
@@ -77,8 +86,8 @@
   </table>
 
   <div class="mt-4 d-flex justify-content-between">
-    <a href="<?= base_url('admin/dashboard') ?>" class="btn btn-secondary">⬅️ Kembali ke Dashboard</a>
-    <a href="<?= base_url('admin/anggota/tambah') ?>" class="btn btn-dark">➕ Tambah Anggota</a>
+    <a href="<?= base_url('admin/dashboard') ?>" class="btn btn-secondary">Kembali ke Dashboard</a>
+    <a href="<?= base_url('admin/anggota/tambah') ?>" class="btn btn-dark">Tambah Anggota</a>
   </div>
 </div>
 

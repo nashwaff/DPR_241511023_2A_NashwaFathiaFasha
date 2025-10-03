@@ -24,7 +24,5 @@ $routes->group('admin', ['filter' => ['auth', 'role:Admin']], static function($r
     $routes->get('anggota/lihat', 'Anggota::lihat');
     $routes->get('anggota/ubah/(:num)', 'Anggota::ubahForm/$1');
     $routes->post('anggota/update', 'Anggota::update');
-
-    // soon:
-    // $routes->get('anggota/hapus/(:num)', 'Anggota::hapus/$1');
+    $routes->get('anggota/hapus/(:num)', 'Anggota::hapus/$1');
 });

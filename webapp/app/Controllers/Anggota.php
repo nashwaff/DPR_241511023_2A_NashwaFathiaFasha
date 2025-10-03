@@ -45,7 +45,7 @@ class Anggota extends Controller
 
         $model->insert($data);
 
-        return redirect()->to('/admin/anggota')->with('success', 'Data anggota berhasil ditambahkan!');
+        return redirect()->to('/admin/dashboard')->with('success', 'Data anggota berhasil ditambahkan!');
     }
 
     public function lihat()
@@ -112,6 +112,20 @@ class Anggota extends Controller
         $model->update($id, $data);
 
         return redirect()->to('/admin/anggota/lihat')->with('success', 'Data anggota berhasil diperbarui!');
+    }
+
+    public function hapus($id)
+    {
+        $model = new \App\Models\AnggotaModel();
+
+        $anggota = $model->find($id);
+        if (!$anggota) {
+            return redirect()->to('/admin/anggota/lihat')->with('error', 'Data anggota tidak ditemukan.');
+        }
+
+        $model->delete($id);
+
+        return redirect()->to('/admin/anggota/lihat')->with('success', 'Data anggota berhasil dihapus ✅');
     }
 
 }
