@@ -30,7 +30,7 @@ class Auth extends Controller
                     'role' => $user['role'],
                     'logged_in' => true
                 ]);
-                return redirect()->to('/admin');
+                return redirect()->to('/admin/dashboard');
             } else {
                 $session->setFlashdata('error', 'Password salah!');
                 return redirect()->to('/login');

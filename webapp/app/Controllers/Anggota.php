@@ -41,8 +41,31 @@ class Anggota extends Controller
             'jumlah_anak'       => $this->request->getPost('jumlah_anak') ?? 0
         ];
 
+        
+
         $model->insert($data);
 
         return redirect()->to('/admin/anggota')->with('success', 'Data anggota berhasil ditambahkan!');
     }
+
+    public function lihat()
+    {
+        $model = new \App\Models\AnggotaModel();
+
+        $keyword = $this->request->getGet('keyword');
+
+        if ($keyword) {
+            $data['anggota'] = $model
+                ->like('id_anggota', $keyword)
+                ->orLike('nama_depan', $keyword)
+                ->orLike('nama_belakang', $keyword)
+                ->orLike('jabatan', $keyword)
+                ->findAll();
+        } else {
+            $data['anggota'] = $model->findAll();
+        }
+
+        return view('anggota/lihat', $data);
+    }
+
 }
