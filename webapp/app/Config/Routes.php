@@ -12,8 +12,6 @@ $routes->post('/login', 'Auth::loginAction');
 $routes->get('/logout', 'Auth::logout');
 
 
-// ADMIN AREA (dengan filter)
-
 $routes->group('admin', ['filter' => ['auth', 'role:Admin']], static function($routes) {
     // Dashboard Admin
     $routes->get('dashboard', 'Dashboard::index');
@@ -25,4 +23,9 @@ $routes->group('admin', ['filter' => ['auth', 'role:Admin']], static function($r
     $routes->get('anggota/ubah/(:num)', 'Anggota::ubahForm/$1');
     $routes->post('anggota/update', 'Anggota::update');
     $routes->get('anggota/hapus/(:num)', 'Anggota::hapus/$1');
+
+    //CRUD Komponen Gaji
+    $routes->get('komponen/tambah', 'KomponenGaji::tambahForm');
+    $routes->post('komponen/simpan', 'KomponenGaji::simpan');
 });
+
