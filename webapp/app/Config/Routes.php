@@ -36,5 +36,7 @@ $routes->group('admin', ['filter' => ['auth', 'role:Admin']], static function($r
     $routes->get('penggajian/tambah', 'Penggajian::tambahForm');
     $routes->post('penggajian/simpan', 'Penggajian::simpan');
     $routes->get('penggajian/lihat', 'Penggajian::lihat');
+    $routes->get('penggajian/ubah/(:num)', 'Penggajian::ubah/$1');
+    $routes->post('penggajian/update/(:num)', 'Penggajian::update/$1');
 
 });
