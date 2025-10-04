@@ -9,11 +9,18 @@ class KomponenGaji extends Controller
 {
     public function tambahForm()
     {
+        if (session()->get('role') !== 'Admin') {
+            return redirect()->to('/komponen/lihat')->with('error', 'Anda tidak memiliki akses untuk menambah data.');
+        }
         return view('komponen/TambahKomponenGaji');
     }
 
     public function simpan()
     {
+        if (session()->get('role') !== 'Admin') {
+            return redirect()->to('/komponen/lihat')->with('error', 'Akses ditolak.');
+        }
+
         $model = new KomponenGajiModel();
 
         $data = [
@@ -30,8 +37,7 @@ class KomponenGaji extends Controller
         }
 
         $model->insert($data);
-
-        return redirect()->to('/admin/dashboard')->with('success', 'Komponen Gaji berhasil ditambahkan!');
+        return redirect()->to('/komponen/lihat')->with('success', 'Komponen Gaji berhasil ditambahkan!');
     }
 
     public function lihat()
@@ -57,15 +63,27 @@ class KomponenGaji extends Controller
 
     public function ubah($id)
     {
-        $model = new \App\Models\KomponenGajiModel();
+        if (session()->get('role') !== 'Admin') {
+            return redirect()->to('/komponen/lihat')->with('error', 'Anda tidak memiliki akses untuk mengubah data.');
+        }
+
+        $model = new KomponenGajiModel();
         $data['komponen'] = $model->find($id);
+
+        if (!$data['komponen']) {
+            return redirect()->to('/komponen/lihat')->with('error', 'Data tidak ditemukan.');
+        }
 
         return view('komponen/UbahKomponenGaji', $data);
     }
 
     public function update($id)
     {
-        $model = new \App\Models\KomponenGajiModel();
+        if (session()->get('role') !== 'Admin') {
+            return redirect()->to('/komponen/lihat')->with('error', 'Akses ditolak.');
+        }
+
+        $model = new KomponenGajiModel();
         $data = [
             'nama_komponen' => $this->request->getPost('nama_komponen'),
             'kategori'      => $this->request->getPost('kategori'),
@@ -75,20 +93,23 @@ class KomponenGaji extends Controller
         ];
 
         $model->update($id, $data);
-        return redirect()->to('admin/komponen/lihat')->with('success', 'Komponen berhasil diperbarui!');
+        return redirect()->to('/komponen/lihat')->with('success', 'Komponen berhasil diperbarui!');
     }
 
     public function hapus($id)
     {
-        $model = new \App\Models\KomponenGajiModel();
+        if (session()->get('role') !== 'Admin') {
+            return redirect()->to('/komponen/lihat')->with('error', 'Anda tidak memiliki akses untuk menghapus data.');
+        }
+
+        $model = new KomponenGajiModel();
         $komponen = $model->find($id);
 
         if (!$komponen) {
-            return redirect()->to('admin/komponen/lihat')->with('error', 'Komponen tidak ditemukan.');
+            return redirect()->to('/komponen/lihat')->with('error', 'Komponen tidak ditemukan.');
         }
 
         $model->delete($id);
-        return redirect()->to('admin/komponen/lihat')->with('success', 'Komponen berhasil dihapus!');
+        return redirect()->to('/komponen/lihat')->with('success', 'Komponen berhasil dihapus!');
     }
-
 }

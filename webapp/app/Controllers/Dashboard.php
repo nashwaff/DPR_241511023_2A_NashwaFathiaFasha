@@ -8,13 +8,10 @@ class Dashboard extends Controller
 {
     public function index()
     {
-        // Ambil data user dari session
-        $username = session()->get('username');
-        $role = session()->get('role');
+        if (!session()->get('logged_in')) {
+            return redirect()->to('/login')->with('error', 'Silakan login terlebih dahulu!');
+        }
 
-        return view('admin/dashboard', [
-            'username' => $username,
-            'role'     => $role
-        ]);
+        return view('admin/dashboard');
     }
 }

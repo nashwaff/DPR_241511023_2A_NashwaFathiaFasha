@@ -9,7 +9,7 @@
 
 <div class="container">
     <div class="card shadow">
-        <div class="card-header bg-dark text-white">
+        <div class="card-header bg-dark text-white text-center">
             <h4>Tambah Data Anggota</h4>
         </div>
         <div class="card-body">
@@ -69,7 +69,10 @@
                     <input type="number" name="jumlah_anak" class="form-control" min="0" value="0">
                 </div>
 
-                <button type="submit" class="btn btn-dark w-100">Simpan</button>
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="<?= base_url('admin/dashboard') ?>" class="btn btn-secondary">Kembali ke Dashboard</a>
+                    <button type="submit" class="btn btn-dark">Simpan</button>
+                </div>
             </form>
         </div>
     </div>

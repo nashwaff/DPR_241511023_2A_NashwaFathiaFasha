@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>📊 Lihat Data Penggajian</title>
+  <title>Lihat Data Penggajian</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
@@ -15,7 +15,7 @@
 </nav>
 
 <div class="container mt-5">
-  <h2 class="mb-4 text-center">📊 Daftar Data Penggajian</h2>
+  <h2 class="mb-4 text-center">Daftar Data Penggajian</h2>
 
   <table class="table table-striped table-hover text-center">
     <thead class="table-dark">
@@ -53,9 +53,8 @@
   </table>
 
   <div class="mt-4 d-flex justify-content-between">
-    <a href="<?= base_url('admin/dashboard') ?>" class="btn btn-secondary">⬅️ Kembali ke Dashboard</a>
-    <a href="<?= base_url('admin/penggajian/tambah') ?>" class="btn btn-dark">➕ Tambah Penggajian</a>
-  </div>
+    <a href="<?= base_url('admin/dashboard') ?>" class="btn btn-secondary">Kembali ke Dashboard</a>
+    <a href="<?= base_url('admin/penggajian/tambah') ?>" class="btn btn-dark">Tambah Penggajian</a>
 </div>
 
 </body>
