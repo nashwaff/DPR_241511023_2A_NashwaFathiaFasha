@@ -32,5 +32,8 @@ $routes->group('admin', ['filter' => ['auth', 'role:Admin']], static function($r
     $routes->post('komponen/update/(:num)', 'KomponenGaji::update/$1');
     $routes->get('komponen/hapus/(:num)', 'KomponenGaji::hapus/$1');
 
-});
+    //CRUD Penggajian
+    $routes->get('penggajian/tambah', 'Penggajian::tambahForm');
+    $routes->post('penggajian/simpan', 'Penggajian::simpan');
 
+});
