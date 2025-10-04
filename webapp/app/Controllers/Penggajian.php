@@ -77,4 +77,59 @@ class Penggajian extends Controller
 
         return redirect()->to('/admin/penggajian/lihat')->with('success', 'Data penggajian berhasil ditambahkan!');
     }
+
+    public function lihat()
+    {
+        $penggajianModel = new \App\Models\PenggajianModel();
+        $anggotaModel = new \App\Models\AnggotaModel();
+        $komponenModel = new \App\Models\KomponenGajiModel();
+
+        $anggotaList = $anggotaModel->findAll();
+        $data['penggajian'] = [];
+
+        foreach ($anggotaList as $anggota) {
+            // Ambil semua komponen gaji berdasarkan anggota
+            $komponenAnggota = $penggajianModel
+                ->where('id_anggota', $anggota['id_anggota'])
+                ->findAll();
+
+            $total = 0;
+
+            // Ambil detail tiap komponen berdasarkan ID
+            foreach ($komponenAnggota as $pg) {
+                $komponen = $komponenModel->find($pg['id_komponen_gaji']);
+                if ($komponen) {
+                    $total += $komponen['nominal'];
+                }
+            }
+
+            // Tambahkan tunjangan istri/suami
+            if ($anggota['status_pernikahan'] == 'Kawin') {
+                $tunjanganIstri = $komponenModel->where('nama_komponen', 'Tunjangan Istri/Suami')->first();
+                if ($tunjanganIstri) {
+                    $total += $tunjanganIstri['nominal'];
+                }
+            }
+
+            // Tambahkan tunjangan anak (maks. 2)
+            if ($anggota['jumlah_anak'] > 0) {
+                $jumlahAnak = min($anggota['jumlah_anak'], 2);
+                $tunjanganAnak = $komponenModel->where('nama_komponen', 'Tunjangan Anak')->first();
+                if ($tunjanganAnak) {
+                    $total += $tunjanganAnak['nominal'] * $jumlahAnak;
+                }
+            }
+
+            $data['penggajian'][] = [
+                'id_anggota' => $anggota['id_anggota'],
+                'nama_lengkap' => trim($anggota['gelar_depan'] . ' ' . $anggota['nama_depan'] . ' ' . $anggota['nama_belakang'] . ' ' . $anggota['gelar_belakang']),
+                'jabatan' => $anggota['jabatan'],
+                'total_takehomepay' => $total,
+                'tanggal_penggajian' => date('Y-m-d'),
+            ];
+        }
+
+        return view('penggajian/LihatPenggajian', $data);
+    }
+
 }
