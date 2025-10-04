@@ -54,4 +54,28 @@ class KomponenGaji extends Controller
 
         return view('komponen/LihatKomponenGaji', $data);
     }
+
+    public function ubah($id)
+    {
+        $model = new \App\Models\KomponenGajiModel();
+        $data['komponen'] = $model->find($id);
+
+        return view('komponen/UbahKomponenGaji', $data);
+    }
+
+    public function update($id)
+    {
+        $model = new \App\Models\KomponenGajiModel();
+        $data = [
+            'nama_komponen' => $this->request->getPost('nama_komponen'),
+            'kategori'      => $this->request->getPost('kategori'),
+            'jabatan'       => $this->request->getPost('jabatan'),
+            'nominal'       => $this->request->getPost('nominal'),
+            'satuan'        => $this->request->getPost('satuan')
+        ];
+
+        $model->update($id, $data);
+        return redirect()->to('admin/komponen/lihat')->with('success', 'Komponen berhasil diperbarui!');
+    }
+
 }

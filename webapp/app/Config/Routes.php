@@ -28,6 +28,8 @@ $routes->group('admin', ['filter' => ['auth', 'role:Admin']], static function($r
     $routes->get('komponen/tambah', 'KomponenGaji::tambahForm');
     $routes->post('komponen/simpan', 'KomponenGaji::simpan');
     $routes->get('komponen/lihat', 'KomponenGaji::lihat');
+    $routes->get('komponen/ubah/(:num)', 'KomponenGaji::ubah/$1');
+    $routes->post('komponen/update/(:num)', 'KomponenGaji::update/$1');
 
 });
 
