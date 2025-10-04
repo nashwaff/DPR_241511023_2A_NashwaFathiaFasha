@@ -30,6 +30,7 @@ $routes->group('admin', ['filter' => ['auth', 'role:Admin']], static function($r
     $routes->get('komponen/lihat', 'KomponenGaji::lihat');
     $routes->get('komponen/ubah/(:num)', 'KomponenGaji::ubah/$1');
     $routes->post('komponen/update/(:num)', 'KomponenGaji::update/$1');
+    $routes->get('komponen/hapus/(:num)', 'KomponenGaji::hapus/$1');
 
 });
 

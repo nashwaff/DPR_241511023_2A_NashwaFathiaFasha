@@ -78,4 +78,17 @@ class KomponenGaji extends Controller
         return redirect()->to('admin/komponen/lihat')->with('success', 'Komponen berhasil diperbarui!');
     }
 
+    public function hapus($id)
+    {
+        $model = new \App\Models\KomponenGajiModel();
+        $komponen = $model->find($id);
+
+        if (!$komponen) {
+            return redirect()->to('admin/komponen/lihat')->with('error', 'Komponen tidak ditemukan.');
+        }
+
+        $model->delete($id);
+        return redirect()->to('admin/komponen/lihat')->with('success', 'Komponen berhasil dihapus!');
+    }
+
 }

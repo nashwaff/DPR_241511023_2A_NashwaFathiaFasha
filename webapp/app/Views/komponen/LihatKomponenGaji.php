@@ -51,6 +51,7 @@
             <td class="text-center">
               <a href="<?= base_url('admin/komponen/ubah/' . $k['id_komponen_gaji']) ?>" class="btn btn-warning btn-sm">Ubah</a>
               <a href="<?= base_url('admin/komponen/hapus/' . $k['id_komponen_gaji']) ?>" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus komponen ini?')">Hapus</a>
+
             </td>
           </tr>
         <?php endforeach; ?>
