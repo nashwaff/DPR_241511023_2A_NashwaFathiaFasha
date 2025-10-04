@@ -9,11 +9,18 @@ class Anggota extends Controller
 {
     public function tambahForm()
     {
+        if (session()->get('role') !== 'Admin') {
+            return redirect()->to('/anggota/lihat')->with('error', 'Anda tidak memiliki akses untuk menambah data.');
+        }
         return view('anggota/tambah');
     }
 
     public function simpan()
     {
+        if (session()->get('role') !== 'Admin') {
+            return redirect()->to('/anggota/lihat')->with('error', 'Akses ditolak.');
+        }
+
         $model = new AnggotaModel();
 
         $validation = \Config\Services::validation();
@@ -41,20 +48,19 @@ class Anggota extends Controller
             'jumlah_anak'       => $this->request->getPost('jumlah_anak') ?? 0
         ];
 
-        
-
         $model->insert($data);
-
-        return redirect()->to('/admin/dashboard')->with('success', 'Data anggota berhasil ditambahkan!');
+        return redirect()->to('/anggota/lihat')->with('success', 'Data anggota berhasil ditambahkan!');
     }
 
     public function lihat()
     {
         $model = new \App\Models\AnggotaModel();
 
+        // ambil keyword dari pencarian (jika ada)
         $keyword = $this->request->getGet('keyword');
 
-        if ($keyword) {
+        if ($keyword && $keyword !== '') {
+            // kalau ada keyword, cari berdasarkan kolom-kolom tertentu
             $data['anggota'] = $model
                 ->like('id_anggota', $keyword)
                 ->orLike('nama_depan', $keyword)
@@ -62,7 +68,18 @@ class Anggota extends Controller
                 ->orLike('jabatan', $keyword)
                 ->findAll();
         } else {
+            // kalau tidak ada keyword, ambil semua data
             $data['anggota'] = $model->findAll();
+        }
+
+        // pastikan data tidak kosong
+        if (empty($data['anggota'])) {
+            $data['anggota'] = []; // biar tidak error
+        }
+
+        // cek role user
+        if (session()->get('role') === 'Public') {
+            return view('public/anggota_readonly', $data);
         }
 
         return view('anggota/lihat', $data);
@@ -70,11 +87,15 @@ class Anggota extends Controller
 
     public function ubahForm($id)
     {
-        $model = new \App\Models\AnggotaModel();
+        if (session()->get('role') !== 'Admin') {
+            return redirect()->to('/anggota/lihat')->with('error', 'Anda tidak memiliki akses untuk mengubah data.');
+        }
+
+        $model = new AnggotaModel();
         $data['anggota'] = $model->find($id);
 
         if (!$data['anggota']) {
-            return redirect()->to('/admin/anggota/lihat')->with('error', 'Data tidak ditemukan.');
+            return redirect()->to('/anggota/lihat')->with('error', 'Data tidak ditemukan.');
         }
 
         return view('anggota/ubah', $data);
@@ -82,7 +103,12 @@ class Anggota extends Controller
 
     public function update()
     {
-        $model = new \App\Models\AnggotaModel();
+        if (session()->get('role') !== 'Admin') {
+            return redirect()->to('/anggota/lihat')->with('error', 'Akses ditolak.');
+        }
+
+        $model = new AnggotaModel();
+        $id = $this->request->getPost('id_anggota');
 
         $validation = \Config\Services::validation();
         $validation->setRules([
@@ -97,8 +123,6 @@ class Anggota extends Controller
             return redirect()->back()->withInput()->with('errors', $validation->getErrors());
         }
 
-        $id = $this->request->getPost('id_anggota');
-
         $data = [
             'gelar_depan'       => $this->request->getPost('gelar_depan'),
             'nama_depan'        => $this->request->getPost('nama_depan'),
@@ -110,22 +134,21 @@ class Anggota extends Controller
         ];
 
         $model->update($id, $data);
-
-        return redirect()->to('/admin/anggota/lihat')->with('success', 'Data anggota berhasil diperbarui!');
+        return redirect()->to('/anggota/lihat')->with('success', 'Data anggota berhasil diperbarui!');
     }
 
     public function hapus($id)
     {
-        $model = new \App\Models\AnggotaModel();
+        if (session()->get('role') !== 'Admin') {
+            return redirect()->to('/anggota/lihat')->with('error', 'Anda tidak memiliki akses untuk menghapus data.');
+        }
 
-        $anggota = $model->find($id);
-        if (!$anggota) {
-            return redirect()->to('/admin/anggota/lihat')->with('error', 'Data anggota tidak ditemukan.');
+        $model = new AnggotaModel();
+        if (!$model->find($id)) {
+            return redirect()->to('/anggota/lihat')->with('error', 'Data tidak ditemukan.');
         }
 
         $model->delete($id);
-
-        return redirect()->to('/admin/anggota/lihat')->with('success', 'Data anggota berhasil dihapus ✅');
+        return redirect()->to('/anggota/lihat')->with('success', 'Data anggota berhasil dihapus.');
     }
-
 }

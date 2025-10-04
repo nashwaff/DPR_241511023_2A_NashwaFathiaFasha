@@ -6,13 +6,16 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 
+// Halaman Login & Logout
 $routes->get('/', 'Auth::loginForm');
 $routes->get('/login', 'Auth::loginForm');
 $routes->post('/login', 'Auth::loginAction');
 $routes->get('/logout', 'Auth::logout');
 
 
+// ================= ADMIN ROUTES =================
 $routes->group('admin', ['filter' => ['auth', 'role:Admin']], static function($routes) {
+
     // Dashboard Admin
     $routes->get('dashboard', 'Dashboard::index');
 
@@ -24,7 +27,7 @@ $routes->group('admin', ['filter' => ['auth', 'role:Admin']], static function($r
     $routes->post('anggota/update', 'Anggota::update');
     $routes->get('anggota/hapus/(:num)', 'Anggota::hapus/$1');
 
-    //CRUD Komponen Gaji
+    // CRUD Komponen Gaji
     $routes->get('komponen/tambah', 'KomponenGaji::tambahForm');
     $routes->post('komponen/simpan', 'KomponenGaji::simpan');
     $routes->get('komponen/lihat', 'KomponenGaji::lihat');
@@ -32,7 +35,7 @@ $routes->group('admin', ['filter' => ['auth', 'role:Admin']], static function($r
     $routes->post('komponen/update/(:num)', 'KomponenGaji::update/$1');
     $routes->get('komponen/hapus/(:num)', 'KomponenGaji::hapus/$1');
 
-    //CRUD Penggajian
+    // CRUD Penggajian
     $routes->get('penggajian/tambah', 'Penggajian::tambahForm');
     $routes->post('penggajian/simpan', 'Penggajian::simpan');
     $routes->get('penggajian/lihat', 'Penggajian::lihat');
@@ -40,6 +43,14 @@ $routes->group('admin', ['filter' => ['auth', 'role:Admin']], static function($r
     $routes->post('penggajian/update/(:num)', 'Penggajian::update/$1');
     $routes->get('penggajian/hapus/(:num)', 'Penggajian::hapus/$1');
 
+    // Detail Penggajian
     $routes->get('penggajian/detail/(:num)', 'Penggajian::detail/$1');
+});
 
+
+// ================= PUBLIC ROUTES =================
+$routes->group('public', ['filter' => ['auth', 'role:Public']], static function($routes) {
+    $routes->get('dashboard', 'PublicDashboard::index');
+    $routes->get('anggota', 'Anggota::lihat');
+    $routes->get('penggajian', 'Penggajian::lihat');
 });
