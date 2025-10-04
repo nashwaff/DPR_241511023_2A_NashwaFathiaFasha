@@ -40,4 +40,6 @@ $routes->group('admin', ['filter' => ['auth', 'role:Admin']], static function($r
     $routes->post('penggajian/update/(:num)', 'Penggajian::update/$1');
     $routes->get('penggajian/hapus/(:num)', 'Penggajian::hapus/$1');
 
+    $routes->get('penggajian/detail/(:num)', 'Penggajian::detail/$1');
+
 });

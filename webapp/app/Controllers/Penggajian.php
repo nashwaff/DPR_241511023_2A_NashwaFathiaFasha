@@ -28,7 +28,6 @@ class Penggajian extends Controller
         $idAnggota = $this->request->getPost('id_anggota');
         $idKomponen = $this->request->getPost('id_komponen_gaji');
 
-        // Ambil data anggota untuk validasi status pernikahan & jumlah anak
         $anggota = $anggotaModel->find($idAnggota);
         $komponen = $komponenModel->find($idKomponen);
 
@@ -36,12 +35,12 @@ class Penggajian extends Controller
             return redirect()->back()->with('error', 'Data tidak valid!');
         }
 
-        // VALIDASI: Komponen gaji harus sesuai jabatan
+        // VALIDASI: Komponen harus sesuai jabatan
         if ($komponen['jabatan'] != $anggota['jabatan'] && $komponen['jabatan'] != 'Semua') {
             return redirect()->back()->with('error', 'Komponen tidak sesuai dengan jabatan anggota.');
         }
 
-        // VALIDASI: Tidak boleh menambahkan komponen gaji yang sama
+        // VALIDASI: Komponen gaji tidak boleh duplikat
         $cekDuplikat = $penggajianModel
             ->where('id_anggota', $idAnggota)
             ->where('id_komponen_gaji', $idKomponen)
@@ -51,16 +50,16 @@ class Penggajian extends Controller
             return redirect()->back()->with('error', 'Komponen gaji ini sudah ditambahkan untuk anggota tersebut.');
         }
 
-        // Hitung total takehomepay awal
+        // Hitung total awal
         $total = $komponen['nominal'];
 
-        // Tambahkan tunjangan istri/suami
+        // Tambah tunjangan istri/suami
         if ($anggota['status_pernikahan'] == 'Kawin') {
             $tunjanganIstri = $komponenModel->where('nama_komponen', 'Tunjangan Istri/Suami')->first();
             if ($tunjanganIstri) $total += $tunjanganIstri['nominal'];
         }
 
-        // Tambahkan tunjangan anak (max 2)
+        // Tambah tunjangan anak (maks 2)
         if ($anggota['jumlah_anak'] > 0) {
             $jumlahAnak = min($anggota['jumlah_anak'], 2);
             $tunjanganAnak = $komponenModel->where('nama_komponen', 'Tunjangan Anak')->first();
@@ -70,7 +69,8 @@ class Penggajian extends Controller
         $data = [
             'id_anggota' => $idAnggota,
             'id_komponen_gaji' => $idKomponen,
-            'total_takehomepay' => $total
+            'total_takehomepay' => $total,
+            'tanggal_penggajian' => date('Y-m-d')
         ];
 
         $penggajianModel->insert($data);
@@ -80,24 +80,20 @@ class Penggajian extends Controller
 
     public function lihat()
     {
-        $penggajianModel = new \App\Models\PenggajianModel();
-        $anggotaModel = new \App\Models\AnggotaModel();
-        $komponenModel = new \App\Models\KomponenGajiModel();
+        $penggajianModel = new PenggajianModel();
+        $anggotaModel = new AnggotaModel();
+        $komponenModel = new KomponenGajiModel();
 
         $anggotaList = $anggotaModel->findAll();
         $data['penggajian'] = [];
 
         foreach ($anggotaList as $anggota) {
-            // Ambil semua komponen gaji berdasarkan anggota
             $komponenAnggota = $penggajianModel
-            ->select('id_penggajian, id_komponen_gaji')
-            ->where('id_anggota', $anggota['id_anggota'])
-            ->findAll();
-
+                ->select('id_penggajian, id_komponen_gaji')
+                ->where('id_anggota', $anggota['id_anggota'])
+                ->findAll();
 
             $total = 0;
-
-            // Ambil detail tiap komponen berdasarkan ID
             foreach ($komponenAnggota as $pg) {
                 $komponen = $komponenModel->find($pg['id_komponen_gaji']);
                 if ($komponen) {
@@ -105,41 +101,35 @@ class Penggajian extends Controller
                 }
             }
 
-            // Tambahkan tunjangan istri/suami
             if ($anggota['status_pernikahan'] == 'Kawin') {
                 $tunjanganIstri = $komponenModel->where('nama_komponen', 'Tunjangan Istri/Suami')->first();
-                if ($tunjanganIstri) {
-                    $total += $tunjanganIstri['nominal'];
-                }
+                if ($tunjanganIstri) $total += $tunjanganIstri['nominal'];
             }
 
-            // Tambahkan tunjangan anak (maks. 2)
             if ($anggota['jumlah_anak'] > 0) {
                 $jumlahAnak = min($anggota['jumlah_anak'], 2);
                 $tunjanganAnak = $komponenModel->where('nama_komponen', 'Tunjangan Anak')->first();
-                if ($tunjanganAnak) {
-                    $total += $tunjanganAnak['nominal'] * $jumlahAnak;
-                }
+                if ($tunjanganAnak) $total += $tunjanganAnak['nominal'] * $jumlahAnak;
             }
 
             $data['penggajian'][] = [
-            'id_penggajian' => isset($komponenAnggota[0]['id_penggajian']) ? $komponenAnggota[0]['id_penggajian'] : null,
-            'id_anggota' => $anggota['id_anggota'],
-            'nama_lengkap' => trim($anggota['gelar_depan'] . ' ' . $anggota['nama_depan'] . ' ' . $anggota['nama_belakang'] . ' ' . $anggota['gelar_belakang']),
-            'jabatan' => $anggota['jabatan'],
-            'total_takehomepay' => $total,
-            'tanggal_penggajian' => date('Y-m-d'),
-        ];
-
+                'id_penggajian' => $komponenAnggota[0]['id_penggajian'] ?? null,
+                'id_anggota' => $anggota['id_anggota'],
+                'nama_lengkap' => trim($anggota['gelar_depan'] . ' ' . $anggota['nama_depan'] . ' ' . $anggota['nama_belakang'] . ' ' . $anggota['gelar_belakang']),
+                'jabatan' => $anggota['jabatan'],
+                'total_takehomepay' => $total,
+                'tanggal_penggajian' => date('Y-m-d'),
+            ];
         }
+
         return view('penggajian/LihatPenggajian', $data);
     }
 
     public function ubah($id)
     {
-        $penggajianModel = new \App\Models\PenggajianModel();
-        $anggotaModel = new \App\Models\AnggotaModel();
-        $komponenModel = new \App\Models\KomponenGajiModel();
+        $penggajianModel = new PenggajianModel();
+        $anggotaModel = new AnggotaModel();
+        $komponenModel = new KomponenGajiModel();
 
         $penggajian = $penggajianModel->find($id);
         if (!$penggajian) {
@@ -155,14 +145,13 @@ class Penggajian extends Controller
 
     public function update($id)
     {
-        $penggajianModel = new \App\Models\PenggajianModel();
-        $komponenModel = new \App\Models\KomponenGajiModel();
-        $anggotaModel = new \App\Models\AnggotaModel();
+        $penggajianModel = new PenggajianModel();
+        $komponenModel = new KomponenGajiModel();
+        $anggotaModel = new AnggotaModel();
 
         $idAnggota = $this->request->getPost('id_anggota');
         $idKomponen = $this->request->getPost('id_komponen_gaji');
 
-        // Hitung ulang total take home pay
         $komponen = $komponenModel->find($idKomponen);
         $anggota = $anggotaModel->find($idAnggota);
         $total = $komponen['nominal'];
@@ -192,19 +181,38 @@ class Penggajian extends Controller
 
     public function hapus($id)
     {
-        $penggajianModel = new \App\Models\PenggajianModel();
+        $penggajianModel = new PenggajianModel();
 
-        // Cek apakah data dengan ID tersebut ada
-        $penggajian = $penggajianModel->where('id_anggota', $id)->first();
-
+        $penggajian = $penggajianModel->find($id);
         if (!$penggajian) {
             return redirect()->to('/admin/penggajian/lihat')->with('error', 'Data penggajian tidak ditemukan.');
         }
 
-        // Hapus semua data penggajian yang terkait anggota ini
-        $penggajianModel->where('id_anggota', $id)->delete();
+        $penggajianModel->delete($id);
 
         return redirect()->to('/admin/penggajian/lihat')->with('success', 'Data penggajian berhasil dihapus!');
     }
-    
-}   
+
+    public function detail($id)
+    {
+        $penggajianModel = new \App\Models\PenggajianModel();
+        $anggotaModel = new \App\Models\AnggotaModel();
+        $komponenModel = new \App\Models\KomponenGajiModel();
+
+        $penggajian = $penggajianModel->find($id);
+        if (!$penggajian) {
+            return redirect()->to('/admin/penggajian/lihat')->with('error', 'Data penggajian tidak ditemukan.');
+        }
+
+        $anggota = $anggotaModel->find($penggajian['id_anggota']);
+
+        $komponen = $komponenModel->find($penggajian['id_komponen_gaji']);
+
+        return view('penggajian/DetailPenggajian', [
+            'penggajian' => $penggajian,
+            'anggota' => $anggota,
+            'komponen' => $komponen
+        ]);
+    }
+
+}
