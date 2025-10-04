@@ -38,9 +38,9 @@
             <td>Rp <?= number_format($p['total_takehomepay'], 0, ',', '.') ?></td>
             <td><?= esc($p['tanggal_penggajian']) ?></td>
             <td>
-              <a href="<?= base_url('admin/penggajian/detail/' . $p['id_anggota']) ?>" class="btn btn-info btn-sm">Detail</a>
-              <a href="<?= base_url('admin/penggajian/ubah/' . $p['id_anggota']) ?>" class="btn btn-warning btn-sm">Ubah</a>
-              <a href="<?= base_url('admin/penggajian/hapus/' . $p['id_anggota']) ?>" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus data ini?')">Hapus</a>
+              <a href="<?= base_url('admin/penggajian/detail/' . $p['id_penggajian']) ?>" class="btn btn-info btn-sm">Detail</a>
+              <a href="<?= base_url('admin/penggajian/ubah/' . $p['id_penggajian']) ?>" class="btn btn-warning btn-sm">Ubah</a>
+              <a href="<?= base_url('admin/penggajian/hapus/' . $p['id_penggajian']) ?>" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus data penggajian ini?')">Hapus</a>
             </td>
           </tr>
         <?php endforeach; ?>

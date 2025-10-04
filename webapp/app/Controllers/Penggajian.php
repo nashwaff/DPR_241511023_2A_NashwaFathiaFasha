@@ -189,5 +189,22 @@ class Penggajian extends Controller
 
         return redirect()->to('/admin/penggajian/lihat')->with('success', 'Data penggajian berhasil diperbarui!');
     }
+
+    public function hapus($id)
+    {
+        $penggajianModel = new \App\Models\PenggajianModel();
+
+        // Cek apakah data dengan ID tersebut ada
+        $penggajian = $penggajianModel->where('id_anggota', $id)->first();
+
+        if (!$penggajian) {
+            return redirect()->to('/admin/penggajian/lihat')->with('error', 'Data penggajian tidak ditemukan.');
+        }
+
+        // Hapus semua data penggajian yang terkait anggota ini
+        $penggajianModel->where('id_anggota', $id)->delete();
+
+        return redirect()->to('/admin/penggajian/lihat')->with('success', 'Data penggajian berhasil dihapus!');
+    }
     
 }   
